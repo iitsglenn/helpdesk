@@ -1,5 +1,6 @@
 package com.example.helpdesk;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +17,32 @@ public class TicketService {
 		this.ticketRepository = ticketRepository;
 	}
 	
-	public List<Ticket> getTicket(){
-		return ticketRepository.findAll();
+	private TicketResponse toResponse(Ticket ticket) {
+	    return new TicketResponse(ticket.getTicketId(), ticket.getSubject(),
+	            ticket.getDescription(), ticket.getPriority(), ticket.getStatus());
+	}
+	public List<TicketResponse> getTicket() {
+	    List<TicketResponse> responses = new ArrayList<>();
+	    for (Ticket ticket : ticketRepository.findAll()) {
+	        responses.add(toResponse(ticket));
+	    }
+	    return responses;
 	}
 
-
-	public void insertTicket(Ticket ticket) {
-		ticket.setStatus(Status.NEW);
-		ticketRepository.save(ticket);
+	public TicketResponse insertTicket(CreateTicketRequest request) {
+	    Ticket ticket = new Ticket();
+	    ticket.setSubject(request.subject());
+	    ticket.setDescription(request.description());
+	    ticket.setPriority(request.priority());
+	    ticket.setStatus(Status.NEW);
+	    return toResponse(ticketRepository.save(ticket));
 	}
 
-	public Ticket getTicketById(Long ticketId) {
-		return ticketRepository.findById(ticketId)
-				.orElseThrow(() -> new IllegalStateException(
-						ticketId + "not found"));
+	public TicketResponse getTicketById(Long ticketId) {
+	    Ticket ticket = ticketRepository.findById(ticketId)
+	            .orElseThrow(() -> new IllegalStateException("Ticket " + ticketId + " not found"));
+	    return toResponse(ticket);
 	}
-	
 	
 	
 }

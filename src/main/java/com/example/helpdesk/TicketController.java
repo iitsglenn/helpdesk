@@ -21,18 +21,19 @@ public class TicketController {
 	public TicketController(TicketService ticketService) {
 	    this.ticketService = ticketService;
 	}
+	
 	@GetMapping
-	public List<Ticket> getAllTicket() {
-		return ticketService.getTicket();
+	public List<TicketResponse> getAllTicket() {
+	    return ticketService.getTicket();
 	}
-	
+
 	@GetMapping("{ticketId}")
-	public Ticket getTicketById(@PathVariable Long ticketId) {
-		return ticketService.getTicketById(ticketId);
+	public TicketResponse getTicketById(@PathVariable Long ticketId) {
+	    return ticketService.getTicketById(ticketId);
 	}
-	
+
 	@PostMapping
-	public void addNewTicket(@RequestBody Ticket ticket) {
-		ticketService.insertTicket(ticket);
+	public TicketResponse addNewTicket(@RequestBody CreateTicketRequest request) {
+	    return ticketService.insertTicket(request);
 	}
 }
